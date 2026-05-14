@@ -43,6 +43,12 @@
 - Use Postgres + pgvector as the first RAG storage target in later milestones.
 - Do not require local embedding models or `fastembed` for this project.
 
+## Azure CLI Rules
+- The local environment has Azure CLI (`az`) available.
+- Use `az` for read-only Azure checks when helpful, such as confirming the active account, subscription, resource groups, Azure OpenAI resources, and deployments.
+- Before running `az` commands that create, update, delete, or rotate resources or secrets, explain the purpose and side effects in Japanese and ask for confirmation.
+- Do not print, log, or commit secrets. Avoid commands that expose API keys unless explicitly requested.
+
 ## Documentation Rules
 - Update `README.md` when setup, commands, architecture, environment variables, or public API behavior changes.
 - When introducing a new SDK or framework API for the first time, check official documentation before implementing.
