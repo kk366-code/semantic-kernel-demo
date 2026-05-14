@@ -12,6 +12,7 @@
 - Sync dependencies with `uv sync`.
 - Run commands through `uv run ...`.
 - Commit `uv.lock`.
+- Manage Git hooks with `uv run pre-commit ...`.
 
 ## Python Style
 - Target Python `>=3.12`; local Python 3.13 is supported.
@@ -76,5 +77,6 @@
 ## Command and Git Rules
 - Before running commands with notable side effects, explain the purpose and side effects in Japanese.
 - Never revert user changes unless explicitly asked.
+- Keep the Gitleaks pre-commit hook enabled; do not bypass secret scanning unless the user explicitly asks and understands the risk.
 - Keep commits focused and use English commit titles, for example `chore: bootstrap FastAPI Semantic Kernel project`.
 - PR creation is not mandatory for the initial local sample unless the user requests it.
