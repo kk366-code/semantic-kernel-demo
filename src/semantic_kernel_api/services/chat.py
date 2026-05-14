@@ -6,6 +6,7 @@ from semantic_kernel.connectors.ai.open_ai import (
     AzureChatPromptExecutionSettings,
 )
 from semantic_kernel.contents.chat_history import ChatHistory
+from semantic_kernel.exceptions.service_exceptions import ServiceResponseException
 
 from semantic_kernel_api.config import Settings
 
@@ -20,6 +21,12 @@ class ChatConfigurationError(RuntimeError):
         self.missing_settings = missing_settings
         joined = ", ".join(missing_settings)
         super().__init__(f"Missing Azure OpenAI settings: {joined}")
+
+
+class ChatServiceError(RuntimeError):
+    def __init__(self, message: str) -> None:
+        self.message = message
+        super().__init__(message)
 
 
 class ChatService(Protocol):
@@ -51,9 +58,24 @@ class SemanticKernelChatService:
             temperature=0.2,
             max_tokens=800,
         )
-        result = await self._chat_completion.get_chat_message_content(
-            chat_history=history,
-            settings=execution_settings,
-            kernel=self._kernel,
-        )
+        try:
+            result = await self._chat_completion.get_chat_message_content(
+                chat_history=history,
+                settings=execution_settings,
+                kernel=self._kernel,
+            )
+        except ServiceResponseException as error:
+            raise ChatServiceError(_format_service_error(error)) from error
+
         return str(result)
+
+
+def _format_service_error(error: ServiceResponseException) -> str:
+    error_text = str(error)
+    if "DeploymentNotFound" in error_text:
+        return (
+            "Azure OpenAI deployment was not found. "
+            "Check AZURE_OPENAI_CHAT_DEPLOYMENT, AZURE_OPENAI_ENDPOINT, and wait a few minutes "
+            "if the deployment was just created."
+        )
+    return "Azure OpenAI chat request failed. Check the server logs and Azure OpenAI settings."

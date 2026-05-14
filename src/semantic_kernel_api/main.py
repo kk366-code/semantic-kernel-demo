@@ -12,6 +12,7 @@ from semantic_kernel_api.schemas import ChatRequest, ChatResponse, HealthRespons
 from semantic_kernel_api.services.chat import (
     ChatConfigurationError,
     ChatService,
+    ChatServiceError,
     SemanticKernelChatService,
 )
 
@@ -86,6 +87,13 @@ def create_app(
                     "missing_settings": error.missing_settings,
                 },
             ) from error
+        except ChatServiceError as error:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail={
+                    "message": error.message,
+                },
+            ) from error
 
         return ChatResponse(answer=answer)
 
@@ -130,6 +138,16 @@ def create_app(
                     "message": message,
                 },
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        except ChatServiceError as error:
+            return templates.TemplateResponse(
+                request,
+                "partials/chat_result.html",
+                {
+                    "error": error.message,
+                    "message": message,
+                },
+                status_code=status.HTTP_502_BAD_GATEWAY,
             )
 
         return templates.TemplateResponse(
