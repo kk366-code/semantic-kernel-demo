@@ -1,8 +1,13 @@
+import os
+
 from fastapi.testclient import TestClient
 
 from semantic_kernel_api.config import Settings
 from semantic_kernel_api.main import create_app
-from semantic_kernel_api.services.chat import ChatServiceError
+from semantic_kernel_api.services.chat import (
+    ChatServiceError,
+    _without_blank_azure_openai_url_env_vars,
+)
 
 
 class FakeChatService:
@@ -75,3 +80,15 @@ def test_chat_returns_502_when_chat_service_fails() -> None:
             "message": "Azure OpenAI deployment was not found.",
         }
     }
+
+
+def test_blank_azure_openai_url_env_vars_are_temporarily_removed(monkeypatch) -> None:
+    monkeypatch.setenv("AZURE_OPENAI_ENDPOINT", "")
+    monkeypatch.setenv("AZURE_OPENAI_BASE_URL", "")
+
+    with _without_blank_azure_openai_url_env_vars():
+        assert "AZURE_OPENAI_ENDPOINT" not in os.environ
+        assert "AZURE_OPENAI_BASE_URL" not in os.environ
+
+    assert os.environ["AZURE_OPENAI_ENDPOINT"] == ""
+    assert os.environ["AZURE_OPENAI_BASE_URL"] == ""

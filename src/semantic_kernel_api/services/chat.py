@@ -1,3 +1,6 @@
+import os
+from collections.abc import Iterator
+from contextlib import contextmanager
 from typing import Protocol
 
 from semantic_kernel import Kernel
@@ -13,6 +16,10 @@ from semantic_kernel_api.config import Settings
 DEFAULT_SYSTEM_PROMPT = (
     "You are a concise assistant for a FastAPI and Semantic Kernel sample application. "
     "Answer clearly and mention uncertainty when configuration or context is missing."
+)
+OPTIONAL_AZURE_OPENAI_URL_ENV_VARS = (
+    "AZURE_OPENAI_ENDPOINT",
+    "AZURE_OPENAI_BASE_URL",
 )
 
 
@@ -44,13 +51,14 @@ class SemanticKernelChatService:
         self._kernel = Kernel()
         endpoint = settings.azure_openai_endpoint or None
         base_url = settings.azure_openai_base_url or None
-        self._chat_completion = AzureChatCompletion(
-            deployment_name=settings.azure_openai_chat_deployment,
-            api_key=settings.azure_openai_api_key,
-            endpoint=endpoint,
-            base_url=base_url,
-            api_version=settings.azure_openai_api_version,
-        )
+        with _without_blank_azure_openai_url_env_vars():
+            self._chat_completion = AzureChatCompletion(
+                deployment_name=settings.azure_openai_chat_deployment,
+                api_key=settings.azure_openai_api_key,
+                endpoint=endpoint,
+                base_url=base_url,
+                api_version=settings.azure_openai_api_version,
+            )
         self._kernel.add_service(self._chat_completion)
 
     async def complete(self, message: str) -> str:
@@ -97,3 +105,18 @@ def _format_service_log_detail(error: ServiceResponseException) -> str:
             f"Raw error: {error_text}"
         )
     return f"Azure OpenAI request failed. Raw error: {error_text}"
+
+
+@contextmanager
+def _without_blank_azure_openai_url_env_vars() -> Iterator[None]:
+    removed_values = {
+        name: os.environ[name]
+        for name in OPTIONAL_AZURE_OPENAI_URL_ENV_VARS
+        if os.environ.get(name) == ""
+    }
+    for name in removed_values:
+        del os.environ[name]
+    try:
+        yield
+    finally:
+        os.environ.update(removed_values)

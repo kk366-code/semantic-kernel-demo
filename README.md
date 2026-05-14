@@ -155,16 +155,16 @@ tests/
 
 ```env
 AZURE_OPENAI_ENDPOINT=https://<resource-name>.openai.azure.com/
-AZURE_OPENAI_BASE_URL=
 AZURE_OPENAI_API_KEY=<your-api-key>
 AZURE_OPENAI_API_VERSION=2024-10-21
 AZURE_OPENAI_CHAT_DEPLOYMENT=chat
 ```
 
+`AZURE_OPENAI_BASE_URL` を使わない場合は、`.env` に空行として残さず削除またはコメントアウトしてください。
+
 Foundry のターゲットURIを使う場合:
 
 ```env
-AZURE_OPENAI_ENDPOINT=
 AZURE_OPENAI_BASE_URL=https://<resource-name>.cognitiveservices.azure.com/openai/deployments/<deployment-name>
 AZURE_OPENAI_API_KEY=<your-api-key>
 AZURE_OPENAI_API_VERSION=2024-10-21
