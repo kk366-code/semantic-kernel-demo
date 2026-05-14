@@ -57,6 +57,22 @@
   - any important project rules from this file that the next session should preserve
 - Keep handoff notes short enough to paste into a new chat without bringing unnecessary history.
 
+## Branch and PR Strategy
+- Do not commit directly to `main` for feature work.
+- Use one feature branch per task or tightly related set of changes.
+- Name branches with a short type prefix, for example:
+  - `feat/azure-openai-chat`
+  - `feat/rag-ingestion`
+  - `fix/chat-config-error`
+  - `docs/update-agent-rules`
+- Start new feature work from the latest `main`.
+- If changes are already present on `main`, create a feature branch before committing them.
+- Open a Pull Request into `main` after tests and Ruff checks pass.
+- Write PR titles in English and PR bodies in Japanese.
+- Continue pushing follow-up fixes to the same branch while the PR is open.
+- After a PR is merged, switch back to `main`, update it from `origin/main`, and create a new branch for the next task.
+- Consider `git worktree` only when multiple independent tasks must be developed in parallel.
+
 ## Command and Git Rules
 - Before running commands with notable side effects, explain the purpose and side effects in Japanese.
 - Never revert user changes unless explicitly asked.
