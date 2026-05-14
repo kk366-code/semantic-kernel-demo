@@ -21,6 +21,7 @@ class Settings(BaseSettings):
         required_values = {
             "AZURE_OPENAI_ENDPOINT": self.azure_openai_endpoint,
             "AZURE_OPENAI_API_KEY": self.azure_openai_api_key,
+            "AZURE_OPENAI_API_VERSION": self.azure_openai_api_version,
             "AZURE_OPENAI_CHAT_DEPLOYMENT": self.azure_openai_chat_deployment,
         }
         return [name for name, value in required_values.items() if not value]

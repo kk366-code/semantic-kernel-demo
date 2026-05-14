@@ -38,7 +38,7 @@ class SemanticKernelChatService:
             deployment_name=settings.azure_openai_chat_deployment,
             api_key=settings.azure_openai_api_key,
             endpoint=settings.azure_openai_endpoint,
-            api_version=settings.azure_openai_api_version or None,
+            api_version=settings.azure_openai_api_version,
         )
         self._kernel.add_service(self._chat_completion)
 

@@ -125,5 +125,5 @@ Minimum variables for `/chat`:
 
 - `AZURE_OPENAI_ENDPOINT`
 - `AZURE_OPENAI_API_KEY`
+- `AZURE_OPENAI_API_VERSION`
 - `AZURE_OPENAI_CHAT_DEPLOYMENT`
-- `AZURE_OPENAI_API_VERSION` optional, but recommended when your Azure resource requires a specific API version
