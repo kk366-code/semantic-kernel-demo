@@ -39,7 +39,7 @@ def test_chat_returns_503_when_azure_chat_is_not_configured() -> None:
         "detail": {
             "message": "Azure OpenAI chat is not configured.",
             "missing_settings": [
-                "AZURE_OPENAI_ENDPOINT",
+                "AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_BASE_URL",
                 "AZURE_OPENAI_API_KEY",
                 "AZURE_OPENAI_API_VERSION",
                 "AZURE_OPENAI_CHAT_DEPLOYMENT",

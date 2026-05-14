@@ -123,7 +123,7 @@ tests/
 
 `/chat` に最低限必要な環境変数:
 
-- `AZURE_OPENAI_ENDPOINT`
+- `AZURE_OPENAI_ENDPOINT` または `AZURE_OPENAI_BASE_URL`
 - `AZURE_OPENAI_API_KEY`
 - `AZURE_OPENAI_API_VERSION`
 - `AZURE_OPENAI_CHAT_DEPLOYMENT`
@@ -132,9 +132,10 @@ tests/
 
 1. Azure AI Foundry を開きます。
 2. このアプリで使うプロジェクトまたは Azure OpenAI リソースを選択します。
-3. リソース詳細を開き、endpoint をコピーします。
+3. リソース詳細またはデプロイ詳細を開き、endpoint またはターゲットURIをコピーします。
    - `AZURE_OPENAI_ENDPOINT` に設定します。
    - `https://<resource-name>.openai.azure.com/` のような形式です。
+   - Foundry のデプロイ画面で `https://<resource-name>.cognitiveservices.azure.com/...` 形式のターゲットURIだけが表示される場合は、`AZURE_OPENAI_BASE_URL` に設定します。
 4. 同じリソースのキー管理ページを開き、API key を1つコピーします。
    - `AZURE_OPENAI_API_KEY` に設定します。
    - 実際のキーはコミットしないでください。
@@ -154,9 +155,20 @@ tests/
 
 ```env
 AZURE_OPENAI_ENDPOINT=https://<resource-name>.openai.azure.com/
+AZURE_OPENAI_BASE_URL=
 AZURE_OPENAI_API_KEY=<your-api-key>
 AZURE_OPENAI_API_VERSION=2024-10-21
 AZURE_OPENAI_CHAT_DEPLOYMENT=chat
+```
+
+Foundry のターゲットURIを使う場合:
+
+```env
+AZURE_OPENAI_ENDPOINT=
+AZURE_OPENAI_BASE_URL=https://<resource-name>.cognitiveservices.azure.com/openai/deployments/<deployment-name>
+AZURE_OPENAI_API_KEY=<your-api-key>
+AZURE_OPENAI_API_VERSION=2024-10-21
+AZURE_OPENAI_CHAT_DEPLOYMENT=<deployment-name>
 ```
 
 `DeploymentNotFound` が出る場合は、以下を確認してください。

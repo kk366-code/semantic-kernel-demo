@@ -47,7 +47,7 @@ def test_chat_ui_returns_missing_settings_fragment() -> None:
 
     assert response.status_code == 503
     assert "Azure OpenAI chat is not configured." in response.text
-    assert "AZURE_OPENAI_ENDPOINT" in response.text
+    assert "AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_BASE_URL" in response.text
     assert "AZURE_OPENAI_API_VERSION" in response.text
 
 

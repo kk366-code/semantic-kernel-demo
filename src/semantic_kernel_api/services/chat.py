@@ -42,10 +42,13 @@ class SemanticKernelChatService:
             raise ChatConfigurationError(missing_settings)
 
         self._kernel = Kernel()
+        endpoint = settings.azure_openai_endpoint or None
+        base_url = settings.azure_openai_base_url or None
         self._chat_completion = AzureChatCompletion(
             deployment_name=settings.azure_openai_chat_deployment,
             api_key=settings.azure_openai_api_key,
-            endpoint=settings.azure_openai_endpoint,
+            endpoint=endpoint,
+            base_url=base_url,
             api_version=settings.azure_openai_api_version,
         )
         self._kernel.add_service(self._chat_completion)

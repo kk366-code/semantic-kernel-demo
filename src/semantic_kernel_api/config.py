@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     azure_openai_endpoint: str = ""
+    azure_openai_base_url: str = ""
     azure_openai_api_key: str = ""
     azure_openai_api_version: str = ""
     azure_openai_chat_deployment: str = ""
@@ -18,8 +19,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     def missing_chat_settings(self) -> list[str]:
+        endpoint_or_base_url = self.azure_openai_endpoint or self.azure_openai_base_url
         required_values = {
-            "AZURE_OPENAI_ENDPOINT": self.azure_openai_endpoint,
+            "AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_BASE_URL": endpoint_or_base_url,
             "AZURE_OPENAI_API_KEY": self.azure_openai_api_key,
             "AZURE_OPENAI_API_VERSION": self.azure_openai_api_version,
             "AZURE_OPENAI_CHAT_DEPLOYMENT": self.azure_openai_chat_deployment,
