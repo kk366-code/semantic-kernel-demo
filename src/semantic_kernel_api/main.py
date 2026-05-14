@@ -1,7 +1,11 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 from semantic_kernel_api.config import Settings, get_settings
 from semantic_kernel_api.schemas import ChatRequest, ChatResponse, HealthResponse
@@ -10,6 +14,9 @@ from semantic_kernel_api.services.chat import (
     ChatService,
     SemanticKernelChatService,
 )
+
+PACKAGE_DIR = Path(__file__).parent
+templates = Jinja2Templates(directory=PACKAGE_DIR / "templates")
 
 
 @asynccontextmanager
@@ -30,11 +37,27 @@ def create_app(
         version="0.1.0",
         lifespan=lifespan,
     )
+    app.mount(
+        "/static",
+        StaticFiles(directory=PACKAGE_DIR / "static"),
+        name="static",
+    )
     app.state.settings = resolved_settings
     app.state.chat_service = chat_service
 
     if chat_service is None and resolved_settings.is_chat_configured():
         app.state.chat_service = SemanticKernelChatService(resolved_settings)
+
+    @app.get("/", response_class=HTMLResponse)
+    async def index(request: Request) -> HTMLResponse:
+        return templates.TemplateResponse(
+            request,
+            "index.html",
+            {
+                "chat_configured": request.app.state.chat_service is not None,
+                "missing_settings": request.app.state.settings.missing_chat_settings(),
+            },
+        )
 
     @app.get("/health", response_model=HealthResponse)
     async def health() -> HealthResponse:
@@ -65,6 +88,58 @@ def create_app(
             ) from error
 
         return ChatResponse(answer=answer)
+
+    @app.post("/chat/ui", response_class=HTMLResponse)
+    async def chat_ui(request: Request) -> HTMLResponse:
+        form = await request.form()
+        message = str(form.get("message", "")).strip()
+        if not message:
+            return templates.TemplateResponse(
+                request,
+                "partials/chat_result.html",
+                {
+                    "error": "メッセージを入力してください。",
+                    "message": message,
+                },
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+
+        service = request.app.state.chat_service
+        if service is None:
+            missing_settings = request.app.state.settings.missing_chat_settings()
+            return templates.TemplateResponse(
+                request,
+                "partials/chat_result.html",
+                {
+                    "error": "Azure OpenAI chat is not configured.",
+                    "missing_settings": missing_settings,
+                    "message": message,
+                },
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        try:
+            answer = await service.complete(message)
+        except ChatConfigurationError as error:
+            return templates.TemplateResponse(
+                request,
+                "partials/chat_result.html",
+                {
+                    "error": "Azure OpenAI chat is not configured.",
+                    "missing_settings": error.missing_settings,
+                    "message": message,
+                },
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        return templates.TemplateResponse(
+            request,
+            "partials/chat_result.html",
+            {
+                "answer": answer,
+                "message": message,
+            },
+        )
 
     return app
 
