@@ -12,14 +12,25 @@
       <section class="chat-panel" aria-labelledby="page-title">
         <header class="panel-header">
           <p class="eyebrow">FastAPI + Semantic Kernel</p>
-          <h1 id="page-title">Azure OpenAI Chat</h1>
-          <p class="status {% if chat_configured %}ready{% else %}pending{% endif %}">
-            {% if chat_configured %}
-              Azure OpenAI is configured.
-            {% else %}
-              Azure OpenAI settings are incomplete.
-            {% endif %}
-          </p>
+          <h1 id="page-title">Azure OpenAI Chat & Agent</h1>
+          <div class="status-row">
+            <p class="status {% if chat_configured %}ready{% else %}pending{% endif %}">
+              Chat:
+              {% if chat_configured %}
+                configured
+              {% else %}
+                incomplete
+              {% endif %}
+            </p>
+            <p class="status {% if agent_configured %}ready{% else %}pending{% endif %}">
+              Agent:
+              {% if agent_configured %}
+                configured
+              {% else %}
+                incomplete
+              {% endif %}
+            </p>
+          </div>
         </header>
 
         {% if missing_settings %}
@@ -29,22 +40,50 @@
           </div>
         {% endif %}
 
-        <form
-          class="chat-form"
-          hx-post="/chat/ui"
-          hx-target="#chat-result"
-          hx-swap="innerHTML"
-        >
-          <label for="message">Message</label>
-          <textarea
-            id="message"
-            name="message"
-            rows="5"
-            placeholder="Semantic Kernelで何ができますか？"
-            required
-          ></textarea>
-          <button type="submit">Send</button>
-        </form>
+        <nav class="mode-switch" aria-label="Mode switch">
+          <a href="#chat">Chat</a>
+          <a href="#agent">Agent</a>
+        </nav>
+
+        <div class="mode-grid">
+          <form
+            id="chat"
+            class="chat-form"
+            hx-post="/chat/ui"
+            hx-target="#chat-result"
+            hx-swap="innerHTML"
+            hx-on::response-error="document.querySelector(this.getAttribute('hx-target')).innerHTML = event.detail.xhr.responseText"
+          >
+            <label for="chat-message">Chat Message</label>
+            <textarea
+              id="chat-message"
+              name="message"
+              rows="5"
+              placeholder="Semantic Kernelで何ができますか？"
+              required
+            ></textarea>
+            <button type="submit">Send Chat</button>
+          </form>
+
+          <form
+            id="agent"
+            class="chat-form"
+            hx-post="/agent/ui"
+            hx-target="#chat-result"
+            hx-swap="innerHTML"
+            hx-on::response-error="document.querySelector(this.getAttribute('hx-target')).innerHTML = event.detail.xhr.responseText"
+          >
+            <label for="agent-message">Agent Message</label>
+            <textarea
+              id="agent-message"
+              name="message"
+              rows="5"
+              placeholder="このアプリで試せるAPIを教えて"
+              required
+            ></textarea>
+            <button type="submit">Ask Agent</button>
+          </form>
+        </div>
 
         <section id="chat-result" class="chat-result" aria-live="polite">
           <p class="empty-state">回答はここに表示されます。</p>

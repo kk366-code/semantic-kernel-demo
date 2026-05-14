@@ -50,6 +50,7 @@
 - Do not print, log, or commit secrets. Avoid commands that expose API keys unless explicitly requested.
 
 ## Documentation Rules
+- Write `README.md` in Japanese.
 - Update `README.md` when setup, commands, architecture, environment variables, or public API behavior changes.
 - When introducing a new SDK or framework API for the first time, check official documentation before implementing.
 - Explain meaningful new files or structural changes briefly in the final response.
