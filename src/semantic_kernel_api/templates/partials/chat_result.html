@@ -10,7 +10,7 @@
   <article class="result">
     <p class="result-label">You</p>
     <p>{{ message }}</p>
-    <p class="result-label">Assistant</p>
+    <p class="result-label">{{ assistant_label | default("Assistant") }}</p>
     <p>{{ answer }}</p>
   </article>
 {% endif %}

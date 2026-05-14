@@ -51,6 +51,12 @@ h1 {
   line-height: 1.2;
 }
 
+.status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .status {
   width: fit-content;
   margin: 0;
@@ -79,6 +85,32 @@ h1 {
   background: #fffaf0;
   padding: 14px;
   color: #5e4300;
+}
+
+.mode-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #e5e9f0;
+  padding-bottom: 12px;
+}
+
+.mode-switch a {
+  border-radius: 8px;
+  color: #1f2937;
+  font-weight: 700;
+  padding: 8px 12px;
+  text-decoration: none;
+}
+
+.mode-switch a:hover {
+  background: #edf2ff;
+  color: #1f4fb8;
+}
+
+.mode-grid {
+  display: grid;
+  gap: 22px;
 }
 
 .chat-form {

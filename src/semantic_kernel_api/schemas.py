@@ -11,3 +11,12 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     answer: str
+
+
+class AgentRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=8000)
+
+
+class AgentResponse(BaseModel):
+    answer: str
+    agent_name: str
