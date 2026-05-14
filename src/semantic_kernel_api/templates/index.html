@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Semantic Kernel Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}" />
+    <script src="https://unpkg.com/htmx.org@2.0.7" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="chat-panel" aria-labelledby="page-title">
+        <header class="panel-header">
+          <p class="eyebrow">FastAPI + Semantic Kernel</p>
+          <h1 id="page-title">Azure OpenAI Chat</h1>
+          <p class="status {% if chat_configured %}ready{% else %}pending{% endif %}">
+            {% if chat_configured %}
+              Azure OpenAI is configured.
+            {% else %}
+              Azure OpenAI settings are incomplete.
+            {% endif %}
+          </p>
+        </header>
+
+        {% if missing_settings %}
+          <div class="notice" role="status">
+            <strong>Missing settings</strong>
+            <span>{{ missing_settings | join(", ") }}</span>
+          </div>
+        {% endif %}
+
+        <form
+          class="chat-form"
+          hx-post="/chat/ui"
+          hx-target="#chat-result"
+          hx-swap="innerHTML"
+        >
+          <label for="message">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="5"
+            placeholder="Semantic Kernelで何ができますか？"
+            required
+          ></textarea>
+          <button type="submit">Send</button>
+        </form>
+
+        <section id="chat-result" class="chat-result" aria-live="polite">
+          <p class="empty-state">回答はここに表示されます。</p>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

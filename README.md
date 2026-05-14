@@ -5,6 +5,7 @@ FastAPI, Semantic Kernel, Azure OpenAI, and Postgres + pgvector を段階的に�
 ## Current Scope
 
 - FastAPI app factory
+- Minimal HTMX chat page
 - `GET /health`
 - `POST /chat` API shape for Semantic Kernel + Azure OpenAI
 - Azure OpenAI settings loader
@@ -41,8 +42,19 @@ uv run uvicorn semantic_kernel_api.main:app --app-dir src --reload
 
 Then open:
 
+- Chat UI: http://127.0.0.1:8000/
 - API docs: http://127.0.0.1:8000/docs
 - Health: http://127.0.0.1:8000/health
+
+## Chat UI
+
+The root page provides a minimal HTMX form for trying the chat endpoint in a browser:
+
+```text
+http://127.0.0.1:8000/
+```
+
+If Azure OpenAI is not configured, the page shows the missing environment variables and the form returns a `503` result fragment.
 
 ## Chat API
 
@@ -80,12 +92,16 @@ src/semantic_kernel_api/
 ├── config.py        # pydantic-settings based app configuration
 ├── main.py          # FastAPI app factory and API routes
 ├── schemas.py       # request/response models
+├── static/
+│   └── styles.css   # minimal chat UI styles
+├── templates/       # Jinja2 + HTMX templates
 └── services/
     └── chat.py      # Semantic Kernel chat service boundary
 
 tests/
 ├── test_chat.py     # chat endpoint tests with a fake service
-└── test_health.py   # HTTP-level health endpoint test
+├── test_health.py   # HTTP-level health endpoint test
+└── test_ui.py       # HTMX page and fragment tests
 ```
 
 Near-term additions:

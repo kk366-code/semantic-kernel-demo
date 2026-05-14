@@ -1,0 +1,16 @@
+{% if error %}
+  <article class="result error">
+    <p class="result-label">Error</p>
+    <p>{{ error }}</p>
+    {% if missing_settings %}
+      <p class="missing-settings">{{ missing_settings | join(", ") }}</p>
+    {% endif %}
+  </article>
+{% else %}
+  <article class="result">
+    <p class="result-label">You</p>
+    <p>{{ message }}</p>
+    <p class="result-label">Assistant</p>
+    <p>{{ answer }}</p>
+  </article>
+{% endif %}
