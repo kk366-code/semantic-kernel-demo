@@ -47,9 +47,18 @@
 - When introducing a new SDK or framework API for the first time, check official documentation before implementing.
 - Explain meaningful new files or structural changes briefly in the final response.
 
+## Session Handoff Rules
+- If the conversation context becomes heavy, slow, or likely to lose important details, suggest starting a new chat.
+- When suggesting a new chat, provide a concise handoff note that includes:
+  - current repository path and GitHub URL
+  - current branch and latest commit
+  - completed work and verification results
+  - next recommended task
+  - any important project rules from this file that the next session should preserve
+- Keep handoff notes short enough to paste into a new chat without bringing unnecessary history.
+
 ## Command and Git Rules
 - Before running commands with notable side effects, explain the purpose and side effects in Japanese.
 - Never revert user changes unless explicitly asked.
 - Keep commits focused and use English commit titles, for example `chore: bootstrap FastAPI Semantic Kernel project`.
 - PR creation is not mandatory for the initial local sample unless the user requests it.
-
