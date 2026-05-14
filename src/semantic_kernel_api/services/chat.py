@@ -24,8 +24,9 @@ class ChatConfigurationError(RuntimeError):
 
 
 class ChatServiceError(RuntimeError):
-    def __init__(self, message: str) -> None:
+    def __init__(self, message: str, *, log_detail: str | None = None) -> None:
         self.message = message
+        self.log_detail = log_detail or message
         super().__init__(message)
 
 
@@ -65,7 +66,10 @@ class SemanticKernelChatService:
                 kernel=self._kernel,
             )
         except ServiceResponseException as error:
-            raise ChatServiceError(_format_service_error(error)) from error
+            raise ChatServiceError(
+                _format_service_error(error),
+                log_detail=_format_service_log_detail(error),
+            ) from error
 
         return str(result)
 
@@ -79,3 +83,14 @@ def _format_service_error(error: ServiceResponseException) -> str:
             "if the deployment was just created."
         )
     return "Azure OpenAI chat request failed. Check the server logs and Azure OpenAI settings."
+
+
+def _format_service_log_detail(error: ServiceResponseException) -> str:
+    error_text = str(error)
+    if "DeploymentNotFound" in error_text:
+        return (
+            "Azure OpenAI request failed: DeploymentNotFound. "
+            "Check AZURE_OPENAI_CHAT_DEPLOYMENT and AZURE_OPENAI_ENDPOINT. "
+            f"Raw error: {error_text}"
+        )
+    return f"Azure OpenAI request failed. Raw error: {error_text}"

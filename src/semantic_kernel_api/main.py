@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -18,6 +19,7 @@ from semantic_kernel_api.services.chat import (
 
 PACKAGE_DIR = Path(__file__).parent
 templates = Jinja2Templates(directory=PACKAGE_DIR / "templates")
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -88,6 +90,7 @@ def create_app(
                 },
             ) from error
         except ChatServiceError as error:
+            logger.warning("Azure OpenAI chat API request failed: %s", error.log_detail)
             raise HTTPException(
                 status_code=status.HTTP_502_BAD_GATEWAY,
                 detail={
@@ -140,6 +143,7 @@ def create_app(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
         except ChatServiceError as error:
+            logger.warning("Azure OpenAI chat UI request failed: %s", error.log_detail)
             return templates.TemplateResponse(
                 request,
                 "partials/chat_result.html",
